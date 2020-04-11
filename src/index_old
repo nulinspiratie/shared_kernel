@@ -1,0 +1,84 @@
+import {
+  IDisposable, DisposableDelegate
+} from '@phosphor/disposable';
+
+import {
+  JupyterFrontEnd, JupyterFrontEndPlugin
+} from '@jupyterlab/application';
+
+import {
+  ToolbarButton
+} from '@jupyterlab/apputils';
+
+import {
+  DocumentRegistry
+} from '@jupyterlab/docregistry';
+
+import {
+  // NotebookActions, NotebookPanel, INotebookModel
+  NotebookPanel, INotebookModel, INotebookTracker
+} from '@jupyterlab/notebook';
+
+
+
+
+
+/**
+ * A notebook widget extension that adds a button to the toolbar.
+ */
+export
+class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+  constructor(tracker: INotebookTracker) {
+    this.tracker = tracker;
+  }
+  /**
+   * Create a new extension object.
+   */
+  createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
+    let callback = () => {
+      console.log(this.tracker.currentWidget)
+    };
+    let button = new ToolbarButton({
+      className: 'myButton',
+      iconClassName: 'fa fa-fast-forward',
+      onClick: callback,
+      tooltip: 'Run All'
+    });
+
+    panel.toolbar.insertItem(0, 'runAll', button);
+    return new DisposableDelegate(() => {
+      button.dispose();
+    });
+  }
+
+  protected tracker: INotebookTracker
+
+}
+
+/**
+ * The plugin registration information.
+ */
+const plugin: JupyterFrontEndPlugin<void> = {
+  id: 'my-extension-name:buttonPlugin',
+  autoStart: true,
+  requires: [INotebookTracker],
+  activate,
+};
+
+/**
+ * Activate the extension.
+ */
+function activate(app: JupyterFrontEnd, tracker: INotebookTracker) {
+  console.log('JupyterLab extension myextension is activated!');
+  app.docRegistry.addWidgetExtension('Notebook', new ButtonExtension(tracker));
+};
+
+
+/**
+ * Export the plugin as default.
+ */
+export default plugin;
+
+
+
+
