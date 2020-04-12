@@ -1,6 +1,6 @@
 # shared_kernel
 
-![Github Actions Status](https://github.com/my_name/myextension/workflows/Build/badge.svg)
+![Github Actions Status](https://github.com/nulinspiratie/myextension/workflows/Build/badge.svg)
 
 Share kernel between different JupyterLab notebooks
 
