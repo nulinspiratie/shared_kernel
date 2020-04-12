@@ -10,10 +10,29 @@ const extension: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [INotebookTracker],
   activate: (app: JupyterFrontEnd, notebooks: INotebookTracker) => {
+    /**
+     * IPywidgets is currently not able to display widgets on a second notebook
+     * that is connected to the kernel of another notebook. The problem is that
+     * each notebook has its own WidgetManager, and new widgets are only
+     * registered with the primary WidgetManager.
+     *
+     * Here we patch two functions to resolve this issue.
+     * the first patch is to ManagerBase.register_model, which is called when a
+     * new widget is created. We patch it to also register the WidgetManager
+     * as a global variable.
+     * This ensures we can access WidgetManagers from other WidgetManagers
+     *
+     * The second patch is to ManagerBase.get_model, which is called whenever
+     * a widget is requested. If this function is called from the second
+     * notebook, it won't find the widget because it isn't registered.
+     * Here we modify it to also search all other WidgetManagers, and return
+     * the widget model if it exists in any other one.
+     */
 
+    // Here we patch ManagerBase.register_model to also store the WidgetManager
+    // as a global variable in window.widget_managers
     console.log('Adding WidgetManager list to `window`');
     (<any>window).widget_managers = [];
-
 
     console.log('Patching ManagerBase.register_model');
     var _original_register_model = ManagerBase.prototype.register_model;
@@ -34,6 +53,10 @@ const extension: JupyterFrontEndPlugin<void> = {
       )
     };
 
+
+    // Here we patch ManagerBase.get_model, such that if the widget model isn't
+    // registered with the current WidgetManager, it will also look in other
+    // WidgetManagers.
     console.log('Patching ManagerBase.get_model');
     let _original_get_model = ManagerBase.prototype.get_model;
     ManagerBase.prototype.get_model = function (model_id) {
@@ -53,6 +76,10 @@ const extension: JupyterFrontEndPlugin<void> = {
     };
 
     console.log('Done patching');
+
+
+    
+
 
     console.log('JupyterLab extension shared_kernel is activated!');
 
