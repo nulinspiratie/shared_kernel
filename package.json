@@ -7,9 +7,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/my_name/myextension",
+  "homepage": "https://github.com/nulinspiratie/shared-kernel",
   "bugs": {
-    "url": "https://github.com/my_name/myextension/issues"
+    "url": "https://github.com/nulinspiratie/shared-kernel/issues"
   },
   "license": "BSD-3-Clause",
   "author": "Serwan Asaad",
@@ -22,7 +22,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/my_name/myextension.git"
+    "url": "https://github.com/nulinspiratie/shared-kernel.git"
   },
   "scripts": {
     "build": "tsc",
